@@ -7,6 +7,7 @@
 using namespace std;
 
 void leerArchivo();
+void crearArchivoH(string, vector<string>,vector<string>);
 
 int main(){
     leerArchivo();
@@ -29,16 +30,11 @@ void leerArchivo(){
         lista_datos.push_back(dato_leido);
     }
 
-
-    /*for (int i = 0; i < lista_datos.size(); i++){
-        cout << "[" << i << "] " << lista_datos.at(i) << endl;
-    }*/
     int contador = 1;
     vector<string> lista_atributos;
     //while(contador < lista_datos.size()){
 
-        stringstream lineas_datos(lista_datos.at(contador));
-
+        stringstream lineas_datos(lista_datos.at(contador));//Utilizado para iterar por linea y conseguir los datos
         string linea_nombre_clase;
         int contador_lineas = 1;
         //Conseguir linea de primer nombre
@@ -58,7 +54,99 @@ void leerArchivo(){
                 lista_atributos.push_back(linea_atributos);
             }
         }
-        
+
+        string cadena_atributo,tipo_atributo;
+        vector<string> nombre_atributos;
+        //Conseguir los tipos de los atributos de la clase y los nombres de los atributos
+        for (int i = 0; i < lista_atributos.size(); i++){
+            if(i != lista_atributos.size()){//Excluye el error de la linea en blanco
+                cadena_atributo = lista_atributos.at(i).substr(lista_atributos.at(i).find(":") + 1);
+                nombre_atributos.push_back(cadena_atributo.substr(cadena_atributo.find("|") + 1));//Agregar nombre a lista de nombres de atributo
+            }
+            for (int j = 0; j < cadena_atributo.length(); j++){
+                tipo_atributo += cadena_atributo[j];//Conseguir cadena de los tipos de atributo
+                if(cadena_atributo[j] == '|')
+                    break;
+            }
+        }
+
+        vector<string> lista_tipos_atributos;
+        stringstream separarTipos(tipo_atributo);
+        string cadena_temporal;
+        while(getline(separarTipos,cadena_temporal,'|'))
+            lista_tipos_atributos.push_back(cadena_temporal);
+
+        //Creacion de Archivos
+        crearArchivoH(nombre_clase, lista_tipos_atributos, nombre_atributos);
         contador++;
     //}  
+}
+
+void crearArchivoH(string nombre_clase, vector<string> lista_tipos_atributos, vector<string> lista_nombres_atributos){
+
+    //Crear Archivo .h
+    string copia_nombre_clase = nombre_clase;
+
+    ofstream archivoH;
+    archivoH.open(nombre_clase + ".h", ios::out);//Creacion de Archivo
+    
+    if(archivoH.fail())
+        cout << "Ocurrio un error y no se pudo crear el archivo .h\n";
+    
+    transform(nombre_clase.begin(), nombre_clase.end(), nombre_clase.begin(), ::toupper) ;
+    archivoH << "\n"//Ifndef/define
+        << "#ifndef " << nombre_clase << "_H\n"
+        << "#define " << nombre_clase << "_H\n\n"
+        << "#include <string>\n\n" << 
+        "using namespace std;\n\n";    
+
+    //Clase
+    archivoH << "class " << copia_nombre_clase << "{\n"
+        << "    private:\n";
+    
+    int cantidad_atributos = lista_nombres_atributos.size() - 1;//Numero de atributos
+
+    string salida_atributos;
+    for (int i = 0; i < cantidad_atributos; i++)//*Ambas listat tienen el mismo tamaño
+        salida_atributos += "       " + lista_tipos_atributos.at(i) + " " + lista_nombres_atributos.at(i) + ";\n";
+
+    //Constructores
+    archivoH << salida_atributos
+        << "public:\n"
+        << "       " << copia_nombre_clase << "();\n";
+
+    string salida_constructor = "(";
+    for (int i = 0; i < cantidad_atributos; i++){
+        if(i == cantidad_atributos - 1){
+            salida_constructor += lista_tipos_atributos.at(i) + ");\n";
+        } else {
+            salida_constructor += lista_tipos_atributos.at(i) + ",";
+        }
+        
+    }
+
+    //Escribir constructor lleno en archivo .h
+    archivoH << "       " << copia_nombre_clase << salida_constructor;
+
+    //Escribir getters y setters para los atributos
+    string salida_getters_setters;
+
+    string salida_setters;
+    for (int i = 0; i < cantidad_atributos; i++)
+        salida_setters += "       void set_" + lista_nombres_atributos.at(i) + "(" + lista_tipos_atributos.at(i) + ");\n";
+    
+
+    string salida_getters;
+    for (int i = 0; i < cantidad_atributos; i++)
+        salida_getters += "       " + lista_tipos_atributos.at(i) +" get_" + lista_nombres_atributos.at(i) + "();\n";
+
+    salida_getters_setters = salida_setters + salida_getters;
+
+    archivoH << salida_getters_setters;//Escribir getters y setters en el archivo .h
+
+    archivoH << "       string toString();\n"
+             << "       ~" << copia_nombre_clase << "();\n"
+             << "};\n\n"
+             << "#endif";
+
 }
