@@ -8,6 +8,7 @@ using namespace std;
 
 void leerArchivo();
 void crearArchivoH(string, vector<string>,vector<string>);
+void crearArchivoCPP(string, vector<string>, vector<string>);
 
 int main(){
     leerArchivo();
@@ -78,6 +79,7 @@ void leerArchivo(){
 
         //Creacion de Archivos
         crearArchivoH(nombre_clase, lista_tipos_atributos, nombre_atributos);
+        crearArchivoCPP(nombre_clase, lista_tipos_atributos, nombre_atributos);
         contador++;
     //}  
 }
@@ -122,7 +124,6 @@ void crearArchivoH(string nombre_clase, vector<string> lista_tipos_atributos, ve
         } else {
             salida_constructor += lista_tipos_atributos.at(i) + ",";
         }
-        
     }
 
     //Escribir constructor lleno en archivo .h
@@ -143,10 +144,46 @@ void crearArchivoH(string nombre_clase, vector<string> lista_tipos_atributos, ve
     salida_getters_setters = salida_setters + salida_getters;
 
     archivoH << salida_getters_setters;//Escribir getters y setters en el archivo .h
-
+    //Ultima Seccion del Archivo
     archivoH << "       string toString();\n"
              << "       ~" << copia_nombre_clase << "();\n"
              << "};\n\n"
              << "#endif";
+    archivoH.close();
+}
+
+void crearArchivoCPP(string nombre_clase, vector<string>lista_tipos_atributos, vector<string> lista_nombre_atributos){
+
+    ofstream archivoCPP;
+    archivoCPP.open(nombre_clase + ".cpp", ios::out);//Creacion de Archivo
+
+    if(archivoCPP.fail())
+        cout << "Ocurrio un error y no se pudo crear el archivo .h\n";
+    
+
+    string include_h = '"' + nombre_clase + ".h" + '"';
+    archivoCPP << "\n"
+               << "#include" << include_h << "\n\n"
+               << nombre_clase << "::" << nombre_clase << "(){\n}\n\n";
+
+    string salida_constructor_cargado = "(";
+    string salida_metodo_constructor;
+    int cantidad_atributos = lista_nombre_atributos.size() - 1;
+    //Salida de constructor cargado y //Salida adentro de constructor
+    for (int i = 0; i < cantidad_atributos; i++){
+        if(i == cantidad_atributos - 1){
+            salida_constructor_cargado += lista_tipos_atributos.at(i) + " _" + lista_nombre_atributos.at(i) + "){";
+            salida_metodo_constructor += "  " + lista_nombre_atributos.at(i) + " = " + " _" + lista_nombre_atributos.at(i) + ";\n";
+        } else {
+            salida_constructor_cargado += lista_tipos_atributos.at(i) + " _" + lista_nombre_atributos.at(i) + ", ";
+            salida_metodo_constructor += "  " + lista_nombre_atributos.at(i) + " = " + " _" + lista_nombre_atributos.at(i) + ";\n";
+        }
+    }
+
+    cout << salida_metodo_constructor << endl;
+    
+   //Escribir constructor cargado
+   archivoCPP << nombre_clase << "::" << nombre_clase << salida_constructor_cargado << "\n";
+
 
 }
