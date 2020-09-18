@@ -2,12 +2,12 @@
 	nombreclase:Gun
 	Atributo:string|type
 	Atributo:int|damage
-	Atributo:double|price
+	Atributo:double|priceoo
 ]
 
 [
 	nombreclase:Gun2
-	Atributo:string|type
+	Atributo:string|typo
 	Atributo:int|damage
 	Atributo:double|price
 ]

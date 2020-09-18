@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <vector>
+#include <sstream>
 using namespace std;
 
 void leerArchivo();
@@ -25,7 +26,7 @@ void leerArchivo(){
     string dato_leido;
     while(!archivo_generator.eof()){
         getline(archivo_generator, dato_leido, '[');
-        lista_datos.push_back(dato_leido.substr(0,dato_leido.find("]")));
+        lista_datos.push_back(dato_leido);
     }
 
 
@@ -34,22 +35,30 @@ void leerArchivo(){
     }*/
     int contador = 1;
     vector<string> lista_atributos;
-    while(contador < lista_datos.size()){
-        string linea_nombre_clase = lista_datos.at(contador).substr(lista_datos.at(contador).find("n"), lista_datos.at(contador).find("A") - 3);//Substring de linea donde esta el nombre de la clase
-        string nombre_clase = linea_nombre_clase.substr(linea_nombre_clase.find(":") + 1, linea_nombre_clase.find("\n"));//Conseguir el nombre de la clase
+    //while(contador < lista_datos.size()){
+
+        stringstream lineas_datos(lista_datos.at(contador));
+
+        string linea_nombre_clase;
+        int contador_lineas = 1;
+        //Conseguir linea de primer nombre
+        while(getline(lineas_datos, linea_nombre_clase, '\n')){
+            if(contador_lineas == 2){
+                 break;
+            }
+           contador_lineas++;
+        }
+        string nombre_clase = linea_nombre_clase.substr(linea_nombre_clase.find(":") + 1);//Conseguir el nombre de la clase
 
         //Conseguir Atributos
-        string cadena_atributos = lista_datos.at(contador).substr(lista_datos.at(contador).find("A"),  lista_datos.at(contador).find("]"));
-        cout << cadena_atributos;
-        //Poner las lineas de atributos en una lista
-        for (int i = 0; i < cadena_atributos.length(); i++){
-            char temporal = cadena_atributos.at(i);
-            if(temporal == '\n' ){
-                cout << "hola" << endl;
+        //Poner las lineas de texto que contienen a los atributos en una lista
+        string linea_atributos;
+        while(getline(lineas_datos,linea_atributos, '\n')){
+            if(linea_atributos[0] != ']') {
+                lista_atributos.push_back(linea_atributos);
             }
         }
         
-        
         contador++;
-    }  
+    //}  
 }
