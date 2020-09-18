@@ -1,0 +1,13 @@
+[
+	nombreclase:Gun
+	Atributo:string|type
+	Atributo:int|damage
+	Atributo:double|price
+]
+
+[
+	nombreclase:Gun2
+	Atributo:string|type
+	Atributo:int|damage
+	Atributo:double|price
+]
