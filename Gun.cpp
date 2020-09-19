@@ -35,7 +35,7 @@ double Gun::get_priceoo(){
 }
 
 string GUN::toString(){
--> GUN-> type:+type+|damage:+to_stringdamage)+|priceoo:+to_stringpriceoo)+|
+     return "GUN-> type:"+type+|damage:"+to_stringdamage)+|priceoo:"+to_stringpriceoo)+|
 }
 
 GUN::~GUN(){

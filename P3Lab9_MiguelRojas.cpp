@@ -205,11 +205,12 @@ void crearArchivoCPP(string nombre_clase, vector<string>lista_tipos_atributos, v
     //Escribir toString
     transform(nombre_clase.begin(), nombre_clase.end(), nombre_clase.begin(), ::toupper) ;
 
-    archivoCPP << "string " << nombre_clase << "::" << "toString(){\n";
-    string salida_toString = "     return " + '"' + nombre_clase + "-> ";
+    //archivoCPP << "string " << nombre_clase << "::" << "toString(){\n";
+    string s =  '"' + nombre_clase + "-> ";
+    string salida_toString = "     return "  + s;// + s + nombre_clase + "-> ";
 
     for (int i = 0; i < cantidad_atributos; i++){
-        salida_toString += lista_nombre_atributos.at(i) + ":" +  "+"; 
+        salida_toString += lista_nombre_atributos.at(i) + ":" +'"' + "+"; 
 
         if(i == cantidad_atributos){
 
@@ -237,7 +238,7 @@ void crearArchivoCPP(string nombre_clase, vector<string>lista_tipos_atributos, v
     }
 
     salida_toString += "\n}\n\n";
-    archivoCPP << salida_toString;
+    //archivoCPP << salida_toString;
     
     //Escribir Destructor
     archivoCPP << nombre_clase << "::~" << nombre_clase << "(){\n}\n";
