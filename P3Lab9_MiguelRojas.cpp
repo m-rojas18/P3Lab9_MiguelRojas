@@ -95,7 +95,7 @@ void crearArchivoH(string nombre_clase, vector<string> lista_tipos_atributos, ve
     if(archivoH.fail())
         cout << "Ocurrio un error y no se pudo crear el archivo .h\n";
     
-    transform(nombre_clase.begin(), nombre_clase.end(), nombre_clase.begin(), ::toupper) ;
+    transform(nombre_clase.begin(), nombre_clase.end(), nombre_clase.begin(), ::toupper);
     archivoH << "\n"//Ifndef/define
         << "#ifndef " << nombre_clase << "_H\n"
         << "#define " << nombre_clase << "_H\n\n"
@@ -180,10 +180,65 @@ void crearArchivoCPP(string nombre_clase, vector<string>lista_tipos_atributos, v
         }
     }
 
-    cout << salida_metodo_constructor << endl;
-    
    //Escribir constructor cargado
-   archivoCPP << nombre_clase << "::" << nombre_clase << salida_constructor_cargado << "\n";
+   archivoCPP << nombre_clase << "::" << nombre_clase << salida_constructor_cargado << "\n"
+              << salida_metodo_constructor << "}\n\n";
 
+    //Escribir metodos getters y setters
+    string salida_getters_setters, salida_getters, salida_setters;
+    for (int i = 0; i < cantidad_atributos; i++){
+        //Setters
+        salida_setters += "void " + nombre_clase + "::" + "set_" + lista_nombre_atributos.at(i) + "(" + lista_tipos_atributos.at(i) 
+                       + " _" +  lista_nombre_atributos.at(i)  + "){\n"
+                       + "     " + lista_nombre_atributos.at(i) + " = _" + lista_nombre_atributos.at(i) + ";\n}\n\n";
 
+        //Getters
+        salida_getters += lista_tipos_atributos.at(i) + " " + nombre_clase + "::" + "get_" + lista_nombre_atributos.at(i) + "(){\n"
+                       + "     return " + lista_nombre_atributos.at(i) + ";\n}\n\n";
+                       
+    }
+
+    salida_getters_setters = salida_setters + salida_getters;
+
+    archivoCPP << salida_getters_setters;//Escribir salida de setters y getters
+
+    //Escribir toString
+    transform(nombre_clase.begin(), nombre_clase.end(), nombre_clase.begin(), ::toupper) ;
+
+    archivoCPP << "string " << nombre_clase << "::" << "toString(){\n";
+    string salida_toString = "     return " + '"' + nombre_clase + "-> ";
+
+    for (int i = 0; i < cantidad_atributos; i++){
+        salida_toString += lista_nombre_atributos.at(i) + ":" +  "+"; 
+
+        if(i == cantidad_atributos){
+
+            if(lista_tipos_atributos.at(i) == "int" || lista_tipos_atributos.at(i) == "double" || lista_tipos_atributos.at(i) == "float" ){
+                salida_toString += "to_string" + lista_nombre_atributos.at(i)+ ");\n" ;
+            } else if(lista_tipos_atributos.at(i) == "char" || lista_tipos_atributos.at(i) == "string"){
+                //Para string o chars
+                salida_toString += lista_nombre_atributos.at(i) + ";\n";
+            } else if(lista_tipos_atributos.at(i) == "bool"){
+                //Para booleans
+                salida_toString += lista_nombre_atributos.at(i) + ";\n";
+            }
+        } else {
+            //Para atributos numericos
+            if(lista_tipos_atributos.at(i) == "int" || lista_tipos_atributos.at(i) == "double" || lista_tipos_atributos.at(i) == "float" ){
+                salida_toString += "to_string" + lista_nombre_atributos.at(i) + ")+" + "|";
+            } else if(lista_tipos_atributos.at(i) == "char" || lista_tipos_atributos.at(i) == "string"){
+                //Para string o chars
+                salida_toString += lista_nombre_atributos.at(i) + "+" + "|";
+            } else if(lista_tipos_atributos.at(i) == "bool"){
+                //Para booleans
+                salida_toString += lista_nombre_atributos.at(i) + "+" + "|";
+            }
+        }
+    }
+
+    salida_toString += "\n}\n\n";
+    archivoCPP << salida_toString;
+    
+    //Escribir Destructor
+    archivoCPP << nombre_clase << "::~" << nombre_clase << "(){\n}\n";
 }
