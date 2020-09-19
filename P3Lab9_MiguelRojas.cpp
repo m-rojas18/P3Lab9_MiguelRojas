@@ -155,6 +155,7 @@ void crearArchivoH(string nombre_clase, vector<string> lista_tipos_atributos, ve
 void crearArchivoCPP(string nombre_clase, vector<string>lista_tipos_atributos, vector<string> lista_nombre_atributos){
 
     ofstream archivoCPP;
+    string copia_nombre = nombre_clase;
     archivoCPP.open(nombre_clase + ".cpp", ios::out);//Creacion de Archivo
 
     if(archivoCPP.fail())
@@ -241,5 +242,5 @@ void crearArchivoCPP(string nombre_clase, vector<string>lista_tipos_atributos, v
     //archivoCPP << salida_toString;
     
     //Escribir Destructor
-    archivoCPP << nombre_clase << "::~" << nombre_clase << "(){\n}\n";
+    archivoCPP << copia_nombre << "::~" << copia_nombre << "(){\n}\n";
 }
