@@ -33,7 +33,7 @@ void leerArchivo(){
 
     int contador = 1;
     vector<string> lista_atributos;
-    //while(contador < lista_datos.size()){
+    while(contador < lista_datos.size()){
 
         stringstream lineas_datos(lista_datos.at(contador));//Utilizado para iterar por linea y conseguir los datos
         string linea_nombre_clase;
@@ -81,7 +81,7 @@ void leerArchivo(){
         crearArchivoH(nombre_clase, lista_tipos_atributos, nombre_atributos);
         crearArchivoCPP(nombre_clase, lista_tipos_atributos, nombre_atributos);
         contador++;
-    //}  
+    }  
 }
 
 void crearArchivoH(string nombre_clase, vector<string> lista_tipos_atributos, vector<string> lista_nombres_atributos){

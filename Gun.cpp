@@ -34,5 +34,5 @@ double Gun::get_priceoo(){
      return priceoo;
 }
 
-GUN::~GUN(){
+Gun::~Gun(){
 }
